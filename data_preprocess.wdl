@@ -131,6 +131,8 @@ task SamToFastqAndBwaMem {
 }
 
 # Merge original input uBAM file with BWA-aligned BAM file
+# PROGRAM_RECORD_ID, PROGRAM_GROUP_VERSION, PROGRAM_GROUP_COMMAND_LINE,
+# PROGRAM_GROUP_NAME must all be included or none of them
 task MergeBamAlignment {
   File unmapped_bam
   File aligned_bam
