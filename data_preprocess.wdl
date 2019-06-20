@@ -11,11 +11,18 @@ task ArrayCleanData {
   String CleanDataDir
   
   command <<<
+    set -e
+    set -o pipefail
+
     ls ${CleanDataDir}/*.fq.gz | \
     xargs -n2 | tr ' ' '\t' > data4convertionlist
+    samplebasename=$(basename $(head -1 data4convertionlist | cut -f1) _1.fq.gz)
+    echo $samplebasename | cut -d "-" -f1
+    echo $samplebasename | cut -d "_" -f1-2
   >>>
   output {
     File outlist = "data4convertionlist"
+    Array[String] sampleinfo = read_lines(stdout())
   }
 }
 
@@ -26,26 +33,29 @@ task Fastq2ubam {
   String picard_path
   String? platform_override
   String platform=select_first([platform_override, "COMPLETE"])
-  String library=basename(cleanFq_R1, "")
-  String samplename
-  String readgroup
+  Array[String] sampleinfo
+  String pattern1=sampleinfo[0]+"-"
+  String pattern2=sampleinfo[1]+"_"
   String out_ubam_basename=basename(cleanFq_R1, "_1.fq.gz")
-  
+  String readgroup=sub(out_ubam_basename, pattern1, "")
+  String library=sub(sub(out_ubam_basename, pattern2, ""), "-"+readgroup, "")
+  String samplename
+
   command <<<
-    ${picard_path} --javaOptions "-Xms5g -Xmx8g" FastqToSam \
+    ${picard_path} -Xms3g -Xmx8g FastqToSam \
     F1=${cleanFq_R1} \
     F2=${cleanFq_R2} \
-    O=${out_ubam_basename}.ubam \
+    O=${out_ubam_basename}.unmapped.bam \
     PL=${platform} \
     SM=${samplename} \
     LB=${library} \
     RG=${readgroup} \
     SEQUENCING_CENTER=BGI \
-    RUN_DATE=`date +"%y-%m-%d_%H:%M:%S"`
+    RUN_DATE=`date +"%y-%m-%dT%H:%M:%S"`
 
   >>>
   output {
-    File out_ubam = "${out_ubam_basename}.ubam"
+    File out_ubam = "${out_ubam_basename}.unmapped.bam"
   }
 }
 
@@ -73,7 +83,6 @@ task SamToFastqAndBwaMem {
   # This is the .alt file from bwa-kit (https://github.com/lh3/bwa/tree/master/bwakit), 
   # listing the reference contigs that are "alternative". Leave blank in JSON for legacy 
   # references such as b37 and hg19.
-  File? ref_alt
   File ref_amb
   File ref_ann
   File ref_bwt
@@ -85,9 +94,9 @@ task SamToFastqAndBwaMem {
     set -e
 
     # set the bash variable needed for the command-line
-    bash_ref_fa=${ref_fasta}
+    bash_ref_fasta=${ref_fasta}
 
-    ${picard_path} --javaOptions "-Xms3g -Xmx8g" \
+    ${picard_path} -Xms3g -Xmx8g \
     SamToFastq \
     INPUT=${in_ubam} \
     FASTQ=/dev/stdout \
@@ -120,11 +129,8 @@ workflow PreProcessing4VariantDiscovery_GATK4 {
     File ref_bwt
     File ref_pac
     File ref_sa
-    
-    File stringtie = '/services/tools/stringtie/1.3.3b/stringtie'
-    File annotation = '/home/projects/pr_99006/data/rna/genome/hg38_tran/hg38_ucsc.annotated.filtered.gtf'
-    
-    String CleanDataDir = "/home/projects/pr_99006/data/rna/hiPSC-derived_NPC_Neuron/data4Trim"
+      
+    String CleanDataDir
     String bwa_path
     String picard_path
     String samtools_path
@@ -139,13 +145,12 @@ workflow PreProcessing4VariantDiscovery_GATK4 {
       call Fastq2ubam {
         input:
           cleanFq_R1 = fastq[0],
-          cleanFq_R2 = fastq[1]
+          cleanFq_R2 = fastq[1],
+          sampleinfo = ArrayCleanData.sampleinfo,
+          samplename = "AT2",
+          picard_path = picard_path
       }
 
-    }
-
-    Array[File] ubam_files = Fastq2ubam.out_ubam
-    scatter (ubam in ubam_files) {
       call SamToFastqAndBwaMem {
         input:
           bwa_path = bwa_path,
@@ -159,11 +164,12 @@ workflow PreProcessing4VariantDiscovery_GATK4 {
           ref_ann = ref_ann,
           ref_pac = ref_pac,
           ref_sa = ref_sa,
-          in_ubam = ubam
+          in_ubam = Fastq2ubam.out_ubam
 
       }
     }
 }
+
 
 
 
