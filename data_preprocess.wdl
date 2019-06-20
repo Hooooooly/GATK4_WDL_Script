@@ -1,4 +1,3 @@
-
 ## This is for clean fastq reads processing
 ## in oder to get analysis-ready bam files
 
@@ -45,7 +44,7 @@ task Fastq2ubam {
     ${picard_path} -Xms3g -Xmx8g FastqToSam \
     F1=${cleanFq_R1} \
     F2=${cleanFq_R2} \
-    O=${out_ubam_basename}.unmapped.bam \
+    O=${out_ubam_basename}_unmapped.bam \
     PL=${platform} \
     SM=${samplename} \
     LB=${library} \
@@ -55,9 +54,28 @@ task Fastq2ubam {
 
   >>>
   output {
-    File out_ubam = "${out_ubam_basename}.unmapped.bam"
+    File out_ubam = "${out_ubam_basename}_unmapped.bam"
   }
 }
+
+# Collect sequencing yield quality metrics
+task CollectQualityYieldMetrics {
+ File in_ubam
+ String metrics_filename
+ String picard_path
+
+ command <<<
+  ${picard_path} -Xmx2g \
+     CollectQualityYieldMetrics \
+     INPUT=${in_ubam} \
+     OQ=true \
+     OUTPUT=${metrics_filename}
+ >>>
+ output {
+   File metrics = "${metrics_filename}"
+ }
+}
+
 
 task SamToFastqAndBwaMem {
   File in_ubam
@@ -75,7 +93,7 @@ task SamToFastqAndBwaMem {
   # and hard clipping for supplementary alignments.
   String bwa_path  
   String bwa_commandline=bwa_path + " mem -K 100000000 -p -v 3 -t 10 -Y $bash_ref_fasta"
-  String output_bam_basename=basename(in_ubam, ".ubam")
+  String output_bam_basename=basename(in_ubam, "_unmapped.bam")
   String picard_path
   String samtools_path
  
@@ -112,10 +130,54 @@ task SamToFastqAndBwaMem {
   }
 }
 
+# Merge original input uBAM file with BWA-aligned BAM file
+task MergeBamAlignment {
+  File unmapped_bam
+  File aligned_bam
+  File ref_fasta
+  File ref_fasta_index
+  File ref_dict
 
+  String bwa_path
+  String gatk4_path
+  String out_bam_basename=basename(unmapped_bam, "_unmapped.bam")
+  String bwa_commandline=bwa_path + " mem -K 100000000 -p -v 3 -t 10 -Y $bash_ref_fasta"
 
+  command <<<
+   # set the bash variable needed for the command-line
+   bash_ref_fa=${ref_fasta}
+   ${gatk4_path} --java-options "-Dsamjdk.compression_level=4 -Xms3g" \
+     MergeBamAlignment \
+     --VALIDATION_STRINGENCY=SILENT \
+     --EXPECTED_ORIENTATIONS=FR \
+     --ATTRIBUTES_TO_RETAIN=X0 \
+     --ALIGNED_BAM=${aligned_bam} \
+     --UNMAPPED_BAM=${unmapped_bam} \
+     --OUTPUT=${out_bam_basename}.bam \
+     --REFERENCE_SEQUENCE=${ref_fasta} \
+     --PAIRED_RUN=true \
+     --SORT_ORDER="unsorted" \
+     --IS_BISULFITE_SEQUENCE=false \
+     --ALIGNED_READS_ONLY=false \
+     --CLIP_ADAPTERS=false \
+     --MAX_RECORDS_IN_RAM=2000000 \
+     --ADD_MATE_CIGAR=true \
+     --MAX_INSERTIONS_OR_DELETIONS=-1 \
+     --PRIMARY_ALIGNMENT_STRATEGY=MostDistant \
+     --PROGRAM_RECORD_ID "bwamem" \
+     --PROGRAM_GROUP_VERSION "0.7.17-r1188" \
+     --PROGRAM_GROUP_COMMAND_LINE "${bwa_commandline}" \
+     --PROGRAM_GROUP_NAME "bwamem" \
+     --UNMAPPED_READ_STRATEGY=COPY_TO_TAG \
+     --ALIGNER_PROPER_PAIR_FLAGS=true \
+     --UNMAP_CONTAMINANT_READS=true
 
+  >>>
 
+  output {
+    File out_bam = "${out_bam_basename}.bam"
+  }
+}
 
 
 # WORKFLOW DEFINITION 
@@ -134,6 +196,7 @@ workflow PreProcessing4VariantDiscovery_GATK4 {
     String bwa_path
     String picard_path
     String samtools_path
+    String gatk4_path
 
     call ArrayCleanData {
       input:
@@ -167,19 +230,28 @@ workflow PreProcessing4VariantDiscovery_GATK4 {
           in_ubam = Fastq2ubam.out_ubam
 
       }
+
+      # QC the unmapped BAM
+      call CollectQualityYieldMetrics {
+        input:
+          picard_path=picard_path,
+          in_ubam = Fastq2ubam.out_ubam,
+          metrics_filename = basename(Fastq2ubam.out_ubam, ".bam") + ".quality_yield_metrics"
+      }
+
+      call MergeBamAlignment {
+        input:
+          bwa_path = bwa_path,
+          unmapped_bam = Fastq2ubam.out_ubam,
+          aligned_bam = SamToFastqAndBwaMem.output_bam,
+          ref_fasta = ref_fasta,
+          ref_fasta_index = ref_fasta_index,
+          ref_dict = ref_dict,
+          gatk4_path = gatk4_path
+
+
+      }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
