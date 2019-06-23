@@ -1,4 +1,3 @@
-
 ## This is for clean fastq reads processing
 ## in oder to get analysis-ready bam files
 
@@ -32,7 +31,7 @@ task Fastq2ubam {
   File cleanFq_R2
   String picard_path
   String? platform_override
-  String platform=select_first([platform_override, "COMPLETE"])
+  String platform=select_first([platform_override, "complete"])
   Array[String] sampleinfo
   String pattern1=sampleinfo[0]+"-"
   String pattern2=sampleinfo[1]+"_"
@@ -301,19 +300,18 @@ task CreateSequenceGroupingTSV {
 task BaseRecalibrator {
   File input_bam
   File input_bam_index
-  String recalibration_report_filename
-  Array[String] sequence_group_interval
   File dbSNP_vcf
   File dbSNP_vcf_index
-  Array[File] known_indels_sites_VCFs
-  Array[File] known_indels_sites_indices
   File ref_dict
   File ref_fasta
   File ref_fasta_index
-
+  Array[File] known_indels_sites_VCFs
+  Array[File] known_indels_sites_indices
+  Array[String] sequence_group_interval
   String gatk4_path
+  String recalibration_report_filename
 
-  command { 
+  command {
     ${gatk4_path} --java-options "-Xms5g" \
       BaseRecalibrator \
       -R ${ref_fasta} \
@@ -328,6 +326,169 @@ task BaseRecalibrator {
     File recalibration_report = "${recalibration_report_filename}"
   }
 }
+
+# Combine multiple recalibration tables from scattered BaseRecalibrator runs
+# Note that when run from GATK 3.x the tool is not a walker and is invoked differently.
+task GatherBqsrReports {
+  Array[File] input_bqsr_reports
+  String output_report_filename
+  String gatk4_path
+
+  command {
+    ${gatk4_path} --java-options "-Xms5g" \
+      GatherBQSRReports \
+      -I ${sep=' -I ' input_bqsr_reports} \
+      -O ${output_report_filename}
+  }
+  output {
+    File output_bqsr_report = "${output_report_filename}"
+  }
+}
+
+# Apply Base Quality Score Recalibration (BQSR) model
+task ApplyBQSR {
+  File input_bam
+  File input_bam_index
+  File recalibration_report
+  File ref_dict
+  File ref_fasta
+  File ref_fasta_index
+
+  Array[String] sequence_group_interval
+  String output_bam_basename
+  String gatk4_path
+
+  command {
+    ${gatk4_path} --java-options "-Xms4g" \
+      ApplyBQSR \
+      -R ${ref_fasta} \
+      -I ${input_bam} \
+      -O ${output_bam_basename}.bam \
+      -L ${sep=" -L " sequence_group_interval} \
+      -bqsr ${recalibration_report} \
+      --static-quantized-quals 10 --static-quantized-quals 20 --static-quantized-quals 30 \
+      --add-output-sam-program-record \
+      --create-output-bam-md5 \
+      --use-original-qualities
+  }
+  output {
+    File recalibrated_bam = "${output_bam_basename}.bam"
+  }
+}
+
+# Combine multiple recalibrated BAM files from scattered ApplyRecalibration runs
+task GatherBamFiles {
+  Array[File] input_bams
+  String output_bam_basename
+  String gatk4_path
+
+  command {
+    ${gatk4_path} --java-options "-Xms5g" \
+      GatherBamFiles \
+      --INPUT ${sep=' --INPUT ' input_bams} \
+      --OUTPUT ${output_bam_basename}.bam \
+      --CREATE_INDEX true \
+      --CREATE_MD5_FILE true
+  }
+  output {
+    File output_bam = "${output_bam_basename}.bam"
+    File output_bam_index = "${output_bam_basename}.bai"
+    File output_bam_md5 = "${output_bam_basename}.bam.md5"
+  }
+}
+
+# Collect base quality and insert size metrics
+task CollectUnsortedReadgroupBamQualityMetrics {
+  File in_bam
+  String out_bam_prefix
+  String picard_path
+
+  command {
+    ${picard_path} -Xmx8g \
+      CollectMultipleMetrics \
+      INPUT=${in_bam} \
+      OUTPUT=${out_bam_prefix} \
+      ASSUME_SORTED=true \
+      PROGRAM="null" \
+      PROGRAM="CollectBaseDistributionByCycle" \
+      PROGRAM="CollectInsertSizeMetrics" \
+      PROGRAM="MeanQualityByCycle" \
+      PROGRAM="QualityScoreDistribution" \
+      METRIC_ACCUMULATION_LEVEL="null" \
+      METRIC_ACCUMULATION_LEVEL="ALL_READS"
+  }
+  output {
+    File base_distribution_by_cycle_pdf = "${out_bam_prefix}.base_distribution_by_cycle.pdf"
+    File base_distribution_by_cycle_metrics = "${out_bam_prefix}.base_distribution_by_cycle_metrics"
+    File insert_size_histogram_pdf = "${out_bam_prefix}.insert_size_histogram.pdf"
+    File insert_size_metrics = "${out_bam_prefix}.insert_size_metrics"
+    File quality_by_cycle_pdf = "${out_bam_prefix}.quality_by_cycle.pdf"
+    File quality_by_cycle_metrics = "${out_bam_prefix}.quality_by_cycle_metrics"
+    File quality_distribution_pdf = "${out_bam_prefix}.quality_distribution.pdf"
+    File quality_distribution_metrics = "${out_bam_prefix}.quality_distribution_metrics"
+  }
+}
+
+# Collect alignment summary and GC bias quality metrics
+task CollectReadgroupBamQualityMetrics {
+  File in_bam
+  File in_bai
+  File ref_dict
+  File ref_fasta
+  File ref_fasta_index
+  String picard_path
+  String out_bam_prefix
+
+  command {
+    ${picard_path} -Xmx8g\
+      CollectMultipleMetrics \
+      INPUT=${in_bam} \
+      REFERENCE_SEQUENCE=${ref_fasta} \
+      OUTPUT=${out_bam_prefix} \
+      ASSUME_SORTED=true \
+      PROGRAM="null" \
+      PROGRAM="CollectAlignmentSummaryMetrics" \
+      PROGRAM="CollectGcBiasMetrics" \
+      METRIC_ACCUMULATION_LEVEL="null" \
+      METRIC_ACCUMULATION_LEVEL="READ_GROUP"      
+  }
+  output {
+    File alignment_summary_metrics = "${out_bam_prefix}.alignment_summary_metrics"
+    File gc_bias_detail_metrics = "${out_bam_prefix}.gc_bias.detail_metrics"
+    File gc_bias_pdf = "${out_bam_prefix}.gc_bias.pdf"
+    File gc_bias_summary_metrics = "${out_bam_prefix}.gc_bias.summary_metrics"
+  }
+}
+
+# Validate the output bam file
+task ValidateSamFile {
+  File in_bam
+  File in_bai
+  String report_filename
+  File ref_dict
+  File ref_fasta
+  File ref_fasta_index
+  Int? max_output
+  Array[String]? ignore
+  String picard_path
+
+  command {
+    ${picard_path} -Xmx8g\
+      ValidateSamFile \
+      INPUT=${in_bam} \
+      OUTPUT=${report_filename} \
+      REFERENCE_SEQUENCE=${ref_fasta} \
+      ${"MAX_OUTPUT=" + max_output} \
+      IGNORE=${default="null" sep=" IGNORE=" ignore} \
+      MODE=VERBOSE \
+      IS_BISULFITE_SEQUENCED=false
+  }
+  output {
+    File report = "${report_filename}"
+  }
+}
+
+
 
 # WORKFLOW DEFINITION 
 
@@ -388,7 +549,7 @@ workflow PreProcessing4VariantDiscovery_GATK4 {
     # QC the unmapped BAM
     call CollectQualityYieldMetrics {
       input:
-        picard_path=picard_path,
+        picard_path = picard_path,
         in_ubam = Fastq2ubam.out_ubam,
         metrics_filename = basename(Fastq2ubam.out_ubam, ".bam") + ".quality_yield_metrics"
     }
@@ -403,6 +564,40 @@ workflow PreProcessing4VariantDiscovery_GATK4 {
         ref_dict = ref_dict,
         gatk4_path = gatk4_path
     }
+
+    # QC the aligned but unsorted readgroup BAM
+    # No reference needed as the input here is unsorted; providing a reference would cause an error
+    call CollectUnsortedReadgroupBamQualityMetrics {
+      input:
+        picard_path = picard_path,
+        in_bam = MergeBamAlignment.out_bam,
+        out_bam_prefix = basename(Fastq2ubam.out_ubam, "_unmapped.bam") + ".readgroup"
+    }
+
+    # Sort and fix tags in the merged BAM
+    call SortAndFixTags as SortAndFixReadGroupBam {
+      input:
+        gatk4_path = gatk4_path,
+        input_bam = MergeBamAlignment.out_bam,
+        output_bam_basename = basename(Fastq2ubam.out_ubam, "_unmapped.bam") + ".sorted",
+        ref_dict = ref_dict,
+        ref_fasta = ref_fasta,
+        ref_fasta_index = ref_fasta_index
+    }
+
+    # Validate the aligned and sorted readgroup BAM
+    # This is called to help in finding problems early.
+    # If considered too time consuming and not helpful, can be removed.
+    call ValidateSamFile as ValidateReadGroupSamFile {
+      input:
+        picard_path = picard_path,
+        ref_fasta = ref_fasta,
+        ref_fasta_index = ref_fasta_index,
+        ref_dict = ref_dict,
+        in_bam = SortAndFixReadGroupBam.output_bam,
+        in_bai = SortAndFixReadGroupBam.output_bam_index,
+        report_filename = basename(Fastq2ubam.out_ubam, "_unmapped.bam") + ".validation_report"
+    }
   }
 
   call MarkDuplicates {
@@ -413,7 +608,7 @@ workflow PreProcessing4VariantDiscovery_GATK4 {
   }
 
   # Sort aggregated+deduped BAM file and fix tags
-  call SortAndFixTags {
+  call SortAndFixTags as SortAndFixSampleBam {
     input:
       input_bam = MarkDuplicates.output_bam,
       output_bam_basename = basename(MarkDuplicates.output_bam, ".aligned.unsorted.duplicates_marked.bam") + ".aligned.duplicate_marked.sorted",
@@ -434,8 +629,8 @@ workflow PreProcessing4VariantDiscovery_GATK4 {
     # Generate the recalibration model by interval
     call BaseRecalibrator {
       input:
-        input_bam = SortAndFixTags.output_bam,
-        input_bam_index = SortAndFixTags.output_bam_index,
+        input_bam = SortAndFixSampleBam.output_bam,
+        input_bam_index = SortAndFixSampleBam.output_bam_index,
         recalibration_report_filename = basename(MarkDuplicates.output_bam, ".aligned.unsorted.duplicates_marked.bam") + ".recal_data.csv",
         sequence_group_interval = subgroup,
         dbSNP_vcf = dbSNP_vcf,
@@ -449,9 +644,74 @@ workflow PreProcessing4VariantDiscovery_GATK4 {
     }  
   }
 
+  # Merge the recalibration reports resulting from by-interval recalibration
+  call GatherBqsrReports {
+    input:
+      input_bqsr_reports = BaseRecalibrator.recalibration_report,
+      output_report_filename = basename(MarkDuplicates.output_bam, ".aligned.unsorted.duplicates_marked.bam") + ".recal_data.csv",
+      gatk4_path = gatk4_path
+  }
 
+  scatter (subgroup in CreateSequenceGroupingTSV.sequence_grouping_with_unmapped) {
+
+    # Apply the recalibration model by interval
+    call ApplyBQSR {
+      input:
+        input_bam = SortAndFixSampleBam.output_bam,
+        input_bam_index = SortAndFixSampleBam.output_bam_index,
+        output_bam_basename = basename(GatherBqsrReports.output_bqsr_report, ".recal_data.csv") + ".aligned.duplicates_marked.recalibrated",
+        recalibration_report = GatherBqsrReports.output_bqsr_report,
+        sequence_group_interval = subgroup,
+        ref_dict = ref_dict,
+        ref_fasta = ref_fasta,
+        ref_fasta_index = ref_fasta_index,
+        gatk4_path = gatk4_path
+    }
+  } 
+
+  # Merge the recalibrated BAM files resulting from by-interval recalibration
+  call GatherBamFiles {
+    input:
+      input_bams = ApplyBQSR.recalibrated_bam,
+      output_bam_basename = basename(GatherBqsrReports.output_bqsr_report, ".recal_data.csv"),
+      gatk4_path = gatk4_path
+  }
+
+ # Validate the final BAM
+ call ValidateSamFile as ValidateAggregatedSamFile {
+   input:
+     picard_path = picard_path,
+     in_bam = GatherBamFiles.output_bam,
+     in_bai = GatherBamFiles.output_bam_index,
+     report_filename = basename(GatherBqsrReports.output_bqsr_report, ".recal_data.csv") + ".validation_report",
+     ref_dict = ref_dict,
+     ref_fasta = ref_fasta,
+     ref_fasta_index = ref_fasta_index,
+     ignore = ["null"]
+ }
+
+ # QC the final BAM (consolidated after scattered BQSR)
+ call CollectReadgroupBamQualityMetrics {
+   input:
+     picard_path = picard_path,
+     in_bam = GatherBamFiles.output_bam,
+     in_bai = GatherBamFiles.output_bam_index,
+     out_bam_prefix = basename(GatherBqsrReports.output_bqsr_report, ".recal_data.csv") + ".readgroup",
+     ref_dict = ref_dict,
+     ref_fasta = ref_fasta,
+     ref_fasta_index = ref_fasta_index
+ }
+
+
+  # Outputs that will be retained when execution is complete  
+  output {
+    File duplication_metrics = MarkDuplicates.duplicate_metrics
+    File bqsr_report = GatherBqsrReports.output_bqsr_report
+    File analysis_ready_bam = GatherBamFiles.output_bam
+    File analysis_ready_bam_index = GatherBamFiles.output_bam_index
+    File analysis_ready_bam_md5 = GatherBamFiles.output_bam_md5
+  } 
 }
-
 
 
 
