@@ -1,5 +1,5 @@
 {
-  "##_COMMENT1:": "REFERENCE_FILES",
+  "##_COMMENT1": "REFERENCE_FILES",
   "PreProcessing4VariantDiscovery_GATK4.ref_dict": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.dict",
   "PreProcessing4VariantDiscovery_GATK4.ref_fasta": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta",
   "PreProcessing4VariantDiscovery_GATK4.ref_ann": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.ann",
@@ -9,10 +9,10 @@
   "PreProcessing4VariantDiscovery_GATK4.ref_sa": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.sa",
   "PreProcessing4VariantDiscovery_GATK4.ref_fasta_index": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.fai",
   
-  "##_COMMENT2": "DATA DIRECTORY",
+  "##_COMMENT2": "DATA_DIRECTORY",
   "PreProcessing4VariantDiscovery_GATK4.CleanDataDir": "/home/tang-lab/data/yuanyuan/2019_0615/datafastq/I1-AT2",
 
-  "##_COMMENT3": "KNOWN SITES RESOURCES",
+  "##_COMMENT3": "KNOWN_SITES_RESOURCES",
   "PreProcessing4VariantDiscovery_GATK4.dbSNP_vcf": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/dbsnp_138.b37.vcf",
   "PreProcessing4VariantDiscovery_GATK4.dbSNP_vcf_index": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/dbsnp_138.b37.vcf.idx",
   "PreProcessing4VariantDiscovery_GATK4.known_indels_sites_indices": [
@@ -24,13 +24,13 @@
     "/home/tang-lab/data/resource/GATK_resources/bundle/b37/1000G_phase1.indels.b37.vcf"
 ],
 
-  "##_COMMENT4:": "TOOL_PATHS",  
+  "##_COMMENT4": "TOOL_PATHS",  
   "PreProcessing4VariantDiscovery_GATK4.gatk4_path": "/home/tang-lab/biotools/GATK4/gatk-4.1.2.0/gatk",
   "PreProcessing4VariantDiscovery_GATK4.samtools_path": "/home/tang-lab/biotools/anaconda3/bin/samtools",
   "PreProcessing4VariantDiscovery_GATK4.bwa_path": "/home/tang-lab/biotools/anaconda3/bin/bwa",
   "PreProcessing4VariantDiscovery_GATK4.picard_path": "/home/tang-lab/biotools/anaconda3/bin/picard",
 
-  "##_COMMENT5": "QUALITY CONTROL SETTINGS (to override defaults)",
+  "##_COMMENT5": "QUALITY_CONTROL_SETTINGS (to override defaults)",
   "PreProcessing4VariantDiscovery_GATK4.ValidateReadGroupSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
   "PreProcessing4VariantDiscovery_GATK4.ValidateAggregatedSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
   "PreProcessing4VariantDiscovery_GATK4.ValidateAggregatedSamFile.max_output": "1000000000",
