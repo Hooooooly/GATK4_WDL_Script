@@ -440,7 +440,7 @@ task CollectReadgroupBamQualityMetrics {
   String out_bam_prefix
 
   command {
-    ${picard_path} -Xmx8g\
+    ${picard_path} -Xmx8g \
       CollectMultipleMetrics \
       INPUT=${in_bam} \
       REFERENCE_SEQUENCE=${ref_fasta} \
@@ -473,7 +473,7 @@ task ValidateSamFile {
   String picard_path
 
   command {
-    ${picard_path} -Xmx8g\
+    ${picard_path} -Xmx8g \
       ValidateSamFile \
       INPUT=${in_bam} \
       OUTPUT=${report_filename} \
