@@ -2,8 +2,9 @@
 ## in oder to get analysis-ready bam files
 
 
-
-# TASK DEFINITION PART
+##########################
+## TASK DEFINITION PART ##
+##########################
 
 ## Generate a file array for trim
 task ArrayCleanData {
@@ -20,7 +21,7 @@ task ArrayCleanData {
     echo $samplebasename | cut -d "_" -f1-2
   >>>
   output {
-    File outlist = "data4convertionlist"
+    Array[Array[File]] outlist = read_tsv("data4convertionlist")
     Array[String] sampleinfo = read_lines(stdout())
   }
 }
@@ -31,7 +32,7 @@ task Fastq2ubam {
   File cleanFq_R2
   String picard_path
   String? platform_override
-  String platform=select_first([platform_override, "complete"])
+  String platform=select_first([platform_override, "Complete"])
   Array[String] sampleinfo
   String pattern1=sampleinfo[0]+"-"
   String pattern2=sampleinfo[1]+"_"
@@ -489,8 +490,9 @@ task ValidateSamFile {
 }
 
 
-
-# WORKFLOW DEFINITION 
+##############################
+## WORKFLOW DEFINITION PART ##
+##############################
 
 workflow PreProcessing4VariantDiscovery_GATK4 {
   File ref_fasta
@@ -507,25 +509,23 @@ workflow PreProcessing4VariantDiscovery_GATK4 {
   Array[File] known_indels_sites_VCFs
   Array[File] known_indels_sites_indices
     
-  String CleanDataDir
+#  String CleanDataDir
+#  String samplename
   String bwa_path
   String picard_path
   String samtools_path
   String gatk4_path
 
-  call ArrayCleanData {
-    input:
-      CleanDataDir = CleanDataDir
-  }
 
-  Array[Array[File]] inputSamples = read_tsv(ArrayCleanData.outlist)
-  scatter (fastq in inputSamples) {
+  call ArrayCleanData
+
+#  Array[Array[File]] inputSamples = read_tsv(ArrayCleanData.outlist)
+  scatter (fastq in ArrayCleanData.outlist) {
     call Fastq2ubam {
       input:
         cleanFq_R1 = fastq[0],
         cleanFq_R2 = fastq[1],
         sampleinfo = ArrayCleanData.sampleinfo,
-        samplename = "AT2",
         picard_path = picard_path
     }
 
