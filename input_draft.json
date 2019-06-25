@@ -9,9 +9,13 @@
   "FullSomaticPipeline.ref_sa": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.sa",
   "FullSomaticPipeline.ref_fasta_index": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.fai",
 
-  "##_COMMENT2":"DATA_DIRECTORY_Tumor",
-  "FullSomaticPipeline.PreProcess_Tumor.ArrayCleanData.CleanDataDir": "String",
-  "FullSomaticPipeline.PreProcess_Tumor.Fastq2ubam.samplename": "String",
+  "##_COMMENT2_1":"DATA_DIRECTORY_Tumor",
+  "FullSomaticPipeline.PreProcess_Tumor.ArrayCleanData.CleanDataDir": "/home/tang-lab/data/yuanyuan/2019_0615/datafastq/I1-AT2",
+  "FullSomaticPipeline.PreProcess_Tumor.Fastq2ubam.samplename": "AT2",
+
+  "##_COMMENT2_2":"DATA_DIRECTORY_Normal",
+  "FullSomaticPipeline.PreProcess_Normal.ArrayCleanData.CleanDataDir": "/home/tang-lab/data/yuanyuan/2019_0615/datafastq/I1-blood",
+  "FullSomaticPipeline.PreProcess_Normal.Fastq2ubam.samplename": "blood",
 
   "##_COMMENT3": "KNOWN_SITES_RESOURCES",
   "FullSomaticPipeline.dbSNP_vcf": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/dbsnp_138.b37.vcf",
@@ -25,20 +29,23 @@
     "/home/tang-lab/data/resource/GATK_resources/bundle/b37/1000G_phase1.indels.b37.vcf"
 ],
 
+  "##_COMMENT4": "TOOL_PATHS",
+  "FullSomaticPipeline.samtools_path": "/home/tang-lab/biotools/anaconda3/bin/samtools",
+  "FullSomaticPipeline.bwa_path": "/home/tang-lab/biotools/anaconda3/bin/bwa",
+  "FullSomaticPipeline.gatk4_path": "/home/tang-lab/biotools/GATK4/gatk-4.1.2.0/gatk",
+  "FullSomaticPipeline.picard_path": "/home/tang-lab/biotools/anaconda3/bin/picard",
+
   "##_COMMENT5": "QUALITY CONTROL SETTINGS (to override defaults)",
-  "PreProcessing4VariantDiscovery_GATK4.ValidateReadGroupSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
-  "PreProcessing4VariantDiscovery_GATK4.ValidateAggregatedSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
-  "PreProcessing4VariantDiscovery_GATK4.ValidateAggregatedSamFile.max_output": "1000000000",
-  "PreProcessing4VariantDiscovery_GATK4.ValidateReadGroupSamFile.max_output": "1000000000",
+  "FullSomaticPipeline.PreProcess_Tumor.ValidateReadGroupSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
+  "FullSomaticPipeline.PreProcess_Tumor.ValidateAggregatedSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
+  "FullSomaticPipeline.PreProcess_Tumor.ValidateReadGroupSamFile.max_output": "1000000000",
+  "FullSomaticPipeline.PreProcess_Tumor.ValidateAggregatedSamFile.max_output": "1000000000",
+  "FullSomaticPipeline.PreProcess_Tumor.Fastq2ubam.platform_override": "null",
+  "FullSomaticPipeline.PreProcess_Normal.ValidateReadGroupSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
+  "FullSomaticPipeline.PreProcess_Normal.ValidateAggregatedSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
+  "FullSomaticPipeline.PreProcess_Normal.ValidateReadGroupSamFile.max_output": "1000000000",
+  "FullSomaticPipeline.PreProcess_Normal.ValidateAggregatedSamFile.max_output": "1000000000",
+  "FullSomaticPipeline.PreProcess_Normal.Fastq2ubam.platform_override": "null"
 
-
-  "FullSomaticPipeline.PreProcess_Tumor.ValidateReadGroupSamFile.ignore": "Array[String]? (optional)",
-  "FullSomaticPipeline.PreProcess_Tumor.ValidateReadGroupSamFile.max_output": "Int? (optional)",
-  "FullSomaticPipeline.PreProcess_Tumor.Fastq2ubam.platform_override": "String? (optional)",
-  "FullSomaticPipeline.samtools_path": "String",
-  "FullSomaticPipeline.PreProcess_Tumor.ValidateAggregatedSamFile.max_output": "Int? (optional)",
-  "FullSomaticPipeline.bwa_path": "String",
-  "FullSomaticPipeline.gatk4_path": "String",
-  "FullSomaticPipeline.picard_path": "String",
 }
 
