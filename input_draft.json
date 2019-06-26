@@ -40,12 +40,10 @@
   "FullSomaticPipeline.PreProcess_Tumor.ValidateAggregatedSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
   "FullSomaticPipeline.PreProcess_Tumor.ValidateReadGroupSamFile.max_output": "1000000000",
   "FullSomaticPipeline.PreProcess_Tumor.ValidateAggregatedSamFile.max_output": "1000000000",
-  "FullSomaticPipeline.PreProcess_Tumor.Fastq2ubam.platform_override": "null",
   "FullSomaticPipeline.PreProcess_Normal.ValidateReadGroupSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
   "FullSomaticPipeline.PreProcess_Normal.ValidateAggregatedSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
   "FullSomaticPipeline.PreProcess_Normal.ValidateReadGroupSamFile.max_output": "1000000000",
-  "FullSomaticPipeline.PreProcess_Normal.ValidateAggregatedSamFile.max_output": "1000000000",
-  "FullSomaticPipeline.PreProcess_Normal.Fastq2ubam.platform_override": "null"
+  "FullSomaticPipeline.PreProcess_Normal.ValidateAggregatedSamFile.max_output": "1000000000"
 
 }
 
