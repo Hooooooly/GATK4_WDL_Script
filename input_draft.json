@@ -53,8 +53,9 @@
 
   "FullSomaticPipeline.Mutect2_GATK4.Mutect2.compress": "true",
   "FullSomaticPipeline.Mutect2_GATK4.Mutect2.analyzeSoftClippedBase": "false",
-  "FullSomaticPipeline.Mutect2_GATK4.Mutect2.run_ob_filter": "false",
-  "FullSomaticPipeline.Mutect2_GATK4.Mutect2.make_bamout": "true",
+  "FullSomaticPipeline.Mutect2_GATK4.run_ob_filter": "false",
+  "FullSomaticPipeline.Mutect2_GATK4.MergeVCFs.compress": "true",
+  "FullSomaticPipeline.Mutect2_GATK4.make_bamout": "true",
   "FullSomaticPipeline.Mutect2_GATK4.scattered_calling_intervals": [
     "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0000-scattered.interval_list",
     "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0001-scattered.interval_list",
@@ -79,4 +80,3 @@
   ]
 
 }
-
