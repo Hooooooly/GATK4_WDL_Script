@@ -279,9 +279,21 @@ workflow Mutect2_GATK4 {
 
   Array[File] scattered_calling_intervals
 
+  Boolean? run_ob_filter
+  Boolean? make_bamout
+  Boolean is_ob_filter_ran = select_first([run_ob_filter, false])
+  Boolean make_bamout_or_default = select_first([make_bamout, false])
+
   String gatk4_path
   String? m2_extra_args
- 
+
+  # logic about output file names -- these are the names *without* .vcf extensions
+  String output_basename
+  String unfiltered_name = output_basename + "-unfiltered"
+  String filtered_name = output_basename + "-filtered"
+  String funcotated_name = output_basename + "-funcotated"
+
+
   # Somatic variant calling with MuTect2 and summarization
   # of read support for a set number of known variants
   scatter (subintervals in scattered_calling_intervals) {
@@ -300,6 +312,8 @@ workflow Mutect2_GATK4 {
         gnomad = gnomad,
         gnomad_idx = gnomad_idx,
         m2_extra_args = m2_extra_args,
+        run_ob_filter = run_ob_filter,
+        make_bamout = make_bamout,
         variants_for_contamination = variants_for_contamination,
         variants_for_contamination_idx = variants_for_contamination_idx,
         gatk4_path = gatk4_path
@@ -314,7 +328,7 @@ workflow Mutect2_GATK4 {
       sizes = sub_vcf_size
   }
 
-  if (run_ob_filter) {
+  if (is_ob_filter_ran) {
     call LearnReadOrientationModel {
       input:
         f1r2_tar_gz = Mutect2.f1r2_counts,
@@ -327,7 +341,6 @@ workflow Mutect2_GATK4 {
       input_vcfs = Mutect2.unfiltered_vcf,
       input_vcf_indices = Mutect2.unfiltered_vcf_idx,
       output_name = unfiltered_name,
-      compress = compress,
       gatk4_path = gatk4_path
 }
 
@@ -344,7 +357,7 @@ workflow Mutect2_GATK4 {
         ref_fasta_index =ref_fasta_index,
         ref_dict = ref_dict,
         bam_outs = Mutect2.output_bamOut,
-        output_vcf_name = basename(MergeVCFs.merged_vcf, ".vcf"),
+        output_vcf_name = basename(MergeVCFs.merged_vcf, ".vcf.gz"),
         gatk4_path = gatk4_path
     }
 }
@@ -361,11 +374,7 @@ workflow Mutect2_GATK4 {
         input_tables = Mutect2.tumor_pileups,
         output_name = output_basename,
         ref_dict = ref_dict,
-        gatk_override = gatk_override,
-        gatk_docker = gatk_docker,
-        preemptible_attempts = preemptible_attempts,
-        max_retries = max_retries,
-        disk_space = ceil(SumSubVcfs.total_size * large_input_to_output_multiplier) + disk_pad
+        gatk4_path = gatk4_path
     }
 
     if (defined(normal_bam)){
@@ -374,23 +383,15 @@ workflow Mutect2_GATK4 {
           input_tables = Mutect2.normal_pileups,
           output_name = output_basename,
           ref_dict = ref_dict,
-          gatk_override = gatk_override,
-          gatk_docker = gatk_docker,
-          preemptible_attempts = preemptible_attempts,
-          max_retries = max_retries,
-          disk_space = ceil(SumSubVcfs.total_size * large_input_to_output_multiplier) + disk_pad
+          gatk4_path = gatk4_path
       }
     }
 
     call CalculateContamination {
       input:
-        gatk_override = gatk_override,
-        preemptible_attempts = preemptible_attempts,
-        max_retries = max_retries,
-        gatk_docker = gatk_docker,
         tumor_pileups = MergeTumorPileups.merged_table,
         normal_pileups = MergeNormalPileups.merged_table,
-        disk_space = tumor_bam_size + normal_bam_size + ceil(size(variants_for_contamination, "GB") * small_input_to_output_multiplier) + disk_pad
+        gatk4_path = gatk4_path
     }
 }
 
