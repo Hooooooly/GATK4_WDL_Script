@@ -43,7 +43,40 @@
   "FullSomaticPipeline.PreProcess_Normal.ValidateReadGroupSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
   "FullSomaticPipeline.PreProcess_Normal.ValidateAggregatedSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
   "FullSomaticPipeline.PreProcess_Normal.ValidateReadGroupSamFile.max_output": "1000000000",
-  "FullSomaticPipeline.PreProcess_Normal.ValidateAggregatedSamFile.max_output": "1000000000"
+  "FullSomaticPipeline.PreProcess_Normal.ValidateAggregatedSamFile.max_output": "1000000000",
+
+  "##_COMMENT6": "MUTECT2_PATHS",
+  "FullSomaticPipeline.Mutect2_GATK4.variants_for_contamination": "/home/tang-lab/data/resource/GATK_resources/bundle/Mutect2/GetPileupSummaries/small_exac_common_3_b37.vcf.gz",
+  "FullSomaticPipeline.Mutect2_GATK4.variants_for_contamination_idx": "/home/tang-lab/data/resource/GATK_resources/bundle/Mutect2/GetPileupSummaries/small_exac_common_3_b37.vcf.gz.tbi",
+  "FullSomaticPipeline.Mutect2_GATK4.gnomad": "/home/tang-lab/data/resource/GATK_resources/bundle/Mutect2/af-only-gnomad.raw.sites.b37.vcf.gz",
+  "FullSomaticPipeline.Mutect2_GATK4.gnomad_idx": "/home/tang-lab/data/resource/GATK_resources/bundle/Mutect2/af-only-gnomad.raw.sites.b37.vcf.gz.tbi",
+
+  "FullSomaticPipeline.Mutect2_GATK4.Mutect2.compress": "true",
+  "FullSomaticPipeline.Mutect2_GATK4.Mutect2.analyzeSoftClippedBase": "false",
+  "FullSomaticPipeline.Mutect2_GATK4.Mutect2.run_ob_filter": "false",
+  "FullSomaticPipeline.Mutect2_GATK4.Mutect2.make_bamout": "true",
+  "FullSomaticPipeline.Mutect2_GATK4.scattered_calling_intervals": [
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0000-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0001-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0002-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0003-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0004-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0005-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0006-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0007-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0008-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0009-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0010-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0011-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0012-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0013-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0014-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0015-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0016-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0017-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0018-scattered.interval_list",
+    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0019-scattered.interval_list"
+  ]
 
 }
 
