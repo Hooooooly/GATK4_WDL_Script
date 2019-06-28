@@ -1,4 +1,3 @@
-
 ## Whole Pipeline GATK4 Somatic Variants Discovery
 
 
@@ -87,9 +86,8 @@ workflow FullSomaticPipeline {
       tumor_bam_index = PreProcess_Tumor.analysis_ready_bam_index,
       normal_bam = PreProcess_Normal.analysis_ready_bam,
       normal_bam_index = PreProcess_Normal.analysis_ready_bam_index,
+      output_basename = basename(PreProcess_Tumor.analysis_ready_bam, ".bam"),
       gatk4_path = gatk4_path
   }
 
 }
-
-
