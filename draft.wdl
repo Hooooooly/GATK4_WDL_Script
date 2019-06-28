@@ -78,6 +78,17 @@ workflow FullSomaticPipeline {
       gatk4_path = gatk4_path
   }
 
+  call M2.Mutect2_GATK4 {
+    input:
+      ref_fasta = ref_fasta,
+      ref_fasta_index = ref_fasta_index,
+      ref_dict = ref_dict,
+      tumor_bam = PreProcess_Tumor.analysis_ready_bam,
+      tumor_bam_index = PreProcess_Tumor.analysis_ready_bam_index,
+      normal_bam = PreProcess_Normal.analysis_ready_bam,
+      normal_bam_index = PreProcess_Normal.analysis_ready_bam_index,
+      gatk4_path = gatk4_path
+  }
 
 }
 
