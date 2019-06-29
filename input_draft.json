@@ -1,82 +1,85 @@
 {
-  "##_COMMENT1": "REFERENCE_FILES",
-  "FullSomaticPipeline.ref_dict": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.dict",
-  "FullSomaticPipeline.ref_fasta": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta",
-  "FullSomaticPipeline.ref_ann": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.ann",
-  "FullSomaticPipeline.ref_pac": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.pac",
-  "FullSomaticPipeline.ref_bwt": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.bwt",
-  "FullSomaticPipeline.ref_amb": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.amb",
-  "FullSomaticPipeline.ref_sa": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.sa",
-  "FullSomaticPipeline.ref_fasta_index": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.fai",
+    "##_COMMENT1": "REFERENCE_FILES",
+    "FullSomaticPipeline.ref_dict": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.dict",
+    "FullSomaticPipeline.ref_fasta": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta",
+    "FullSomaticPipeline.ref_ann": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.ann",
+    "FullSomaticPipeline.ref_pac": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.pac",
+    "FullSomaticPipeline.ref_bwt": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.bwt",
+    "FullSomaticPipeline.ref_amb": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.amb",
+    "FullSomaticPipeline.ref_sa": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.sa",
+    "FullSomaticPipeline.ref_fasta_index": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/human_g1k_v37_decoy.fasta.fai",
+  
+    "##_COMMENT2_1":"DATA_DIRECTORY_Tumor",
+    "FullSomaticPipeline.PreProcess_Tumor.ArrayCleanData.CleanDataDir": "/home/tang-lab/data/yuanyuan/2019_0615/datafastq/I1-AT2",
+    "FullSomaticPipeline.PreProcess_Tumor.Fastq2ubam.samplename": "AT2",
+  
+    "##_COMMENT2_2":"DATA_DIRECTORY_Normal",
+    "FullSomaticPipeline.PreProcess_Normal.ArrayCleanData.CleanDataDir": "/home/tang-lab/data/yuanyuan/2019_0615/datafastq/I1-blood",
+    "FullSomaticPipeline.PreProcess_Normal.Fastq2ubam.samplename": "blood",
+  
+    "##_COMMENT3": "KNOWN_SITES_RESOURCES",
+    "FullSomaticPipeline.dbSNP_vcf": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/dbsnp_138.b37.vcf",
+    "FullSomaticPipeline.dbSNP_vcf_index": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/dbsnp_138.b37.vcf.idx",
+    "FullSomaticPipeline.known_indels_sites_indices": [
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Mills_and_1000G_gold_standard.indels.b37.vcf.idx",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/1000G_phase1.indels.b37.vcf.idx"
+  ],
+    "FullSomaticPipeline.known_indels_sites_VCFs": [
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Mills_and_1000G_gold_standard.indels.b37.vcf",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/1000G_phase1.indels.b37.vcf"
+  ],
+  
+    "##_COMMENT4": "TOOL_PATHS",
+    "FullSomaticPipeline.samtools_path": "/home/tang-lab/biotools/anaconda3/bin/samtools",
+    "FullSomaticPipeline.bwa_path": "/home/tang-lab/biotools/anaconda3/bin/bwa",
+    "FullSomaticPipeline.gatk4_path": "/home/tang-lab/biotools/GATK4/gatk-4.1.2.0/gatk",
+    "FullSomaticPipeline.picard_path": "/home/tang-lab/biotools/anaconda3/bin/picard",
+  
+    "##_COMMENT5": "QUALITY CONTROL SETTINGS (to override defaults)",
+    "FullSomaticPipeline.PreProcess_Tumor.ValidateReadGroupSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
+    "FullSomaticPipeline.PreProcess_Tumor.ValidateAggregatedSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
+    "FullSomaticPipeline.PreProcess_Tumor.ValidateReadGroupSamFile.max_output": "1000000000",
+    "FullSomaticPipeline.PreProcess_Tumor.ValidateAggregatedSamFile.max_output": "1000000000",
+    "FullSomaticPipeline.PreProcess_Normal.ValidateReadGroupSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
+    "FullSomaticPipeline.PreProcess_Normal.ValidateAggregatedSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
+    "FullSomaticPipeline.PreProcess_Normal.ValidateReadGroupSamFile.max_output": "1000000000",
+    "FullSomaticPipeline.PreProcess_Normal.ValidateAggregatedSamFile.max_output": "1000000000",
+  
+    "##_COMMENT6": "MUTECT2_PATHS",
+    "FullSomaticPipeline.Mutect2_GATK4.variants_for_contamination": "/home/tang-lab/data/resource/GATK_resources/bundle/Mutect2/GetPileupSummaries/small_exac_common_3_b37.vcf.gz",
+    "FullSomaticPipeline.Mutect2_GATK4.variants_for_contamination_idx": "/home/tang-lab/data/resource/GATK_resources/bundle/Mutect2/GetPileupSummaries/small_exac_common_3_b37.vcf.gz.tbi",
+    "FullSomaticPipeline.Mutect2_GATK4.gnomad": "/home/tang-lab/data/resource/GATK_resources/bundle/Mutect2/af-only-gnomad.raw.sites.b37.vcf.gz",
+    "FullSomaticPipeline.Mutect2_GATK4.gnomad_idx": "/home/tang-lab/data/resource/GATK_resources/bundle/Mutect2/af-only-gnomad.raw.sites.b37.vcf.gz.tbi",
+    "FullSomaticPipeline.Mutect2_GATK4.pon": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Mutect2-exome-panel.vcf",
+    "FullSomaticPipeline.Mutect2_GATK4.pon_idx": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Mutect2-exome-panel.vcf.idx",
 
-  "##_COMMENT2_1":"DATA_DIRECTORY_Tumor",
-  "FullSomaticPipeline.PreProcess_Tumor.ArrayCleanData.CleanDataDir": "/home/tang-lab/data/yuanyuan/2019_0615/datafastq/I1-AT2",
-  "FullSomaticPipeline.PreProcess_Tumor.Fastq2ubam.samplename": "AT2",
-
-  "##_COMMENT2_2":"DATA_DIRECTORY_Normal",
-  "FullSomaticPipeline.PreProcess_Normal.ArrayCleanData.CleanDataDir": "/home/tang-lab/data/yuanyuan/2019_0615/datafastq/I1-blood",
-  "FullSomaticPipeline.PreProcess_Normal.Fastq2ubam.samplename": "blood",
-
-  "##_COMMENT3": "KNOWN_SITES_RESOURCES",
-  "FullSomaticPipeline.dbSNP_vcf": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/dbsnp_138.b37.vcf",
-  "FullSomaticPipeline.dbSNP_vcf_index": "/home/tang-lab/data/resource/GATK_resources/bundle/b37/dbsnp_138.b37.vcf.idx",
-  "FullSomaticPipeline.known_indels_sites_indices": [
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Mills_and_1000G_gold_standard.indels.b37.vcf.idx",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/1000G_phase1.indels.b37.vcf.idx"
-],
-  "FullSomaticPipeline.known_indels_sites_VCFs": [
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Mills_and_1000G_gold_standard.indels.b37.vcf",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/1000G_phase1.indels.b37.vcf"
-],
-
-  "##_COMMENT4": "TOOL_PATHS",
-  "FullSomaticPipeline.samtools_path": "/home/tang-lab/biotools/anaconda3/bin/samtools",
-  "FullSomaticPipeline.bwa_path": "/home/tang-lab/biotools/anaconda3/bin/bwa",
-  "FullSomaticPipeline.gatk4_path": "/home/tang-lab/biotools/GATK4/gatk-4.1.2.0/gatk",
-  "FullSomaticPipeline.picard_path": "/home/tang-lab/biotools/anaconda3/bin/picard",
-
-  "##_COMMENT5": "QUALITY CONTROL SETTINGS (to override defaults)",
-  "FullSomaticPipeline.PreProcess_Tumor.ValidateReadGroupSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
-  "FullSomaticPipeline.PreProcess_Tumor.ValidateAggregatedSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
-  "FullSomaticPipeline.PreProcess_Tumor.ValidateReadGroupSamFile.max_output": "1000000000",
-  "FullSomaticPipeline.PreProcess_Tumor.ValidateAggregatedSamFile.max_output": "1000000000",
-  "FullSomaticPipeline.PreProcess_Normal.ValidateReadGroupSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
-  "FullSomaticPipeline.PreProcess_Normal.ValidateAggregatedSamFile.ignore": ["INVALID_PLATFORM_VALUE"],
-  "FullSomaticPipeline.PreProcess_Normal.ValidateReadGroupSamFile.max_output": "1000000000",
-  "FullSomaticPipeline.PreProcess_Normal.ValidateAggregatedSamFile.max_output": "1000000000",
-
-  "##_COMMENT6": "MUTECT2_PATHS",
-  "FullSomaticPipeline.Mutect2_GATK4.variants_for_contamination": "/home/tang-lab/data/resource/GATK_resources/bundle/Mutect2/GetPileupSummaries/small_exac_common_3_b37.vcf.gz",
-  "FullSomaticPipeline.Mutect2_GATK4.variants_for_contamination_idx": "/home/tang-lab/data/resource/GATK_resources/bundle/Mutect2/GetPileupSummaries/small_exac_common_3_b37.vcf.gz.tbi",
-  "FullSomaticPipeline.Mutect2_GATK4.gnomad": "/home/tang-lab/data/resource/GATK_resources/bundle/Mutect2/af-only-gnomad.raw.sites.b37.vcf.gz",
-  "FullSomaticPipeline.Mutect2_GATK4.gnomad_idx": "/home/tang-lab/data/resource/GATK_resources/bundle/Mutect2/af-only-gnomad.raw.sites.b37.vcf.gz.tbi",
-
-  "FullSomaticPipeline.Mutect2_GATK4.Mutect2.compress": "true",
-  "FullSomaticPipeline.Mutect2_GATK4.Mutect2.analyzeSoftClippedBase": "false",
-  "FullSomaticPipeline.Mutect2_GATK4.run_ob_filter": "false",
-  "FullSomaticPipeline.Mutect2_GATK4.MergeVCFs.compress": "true",
-  "FullSomaticPipeline.Mutect2_GATK4.make_bamout": "true",
-  "FullSomaticPipeline.Mutect2_GATK4.scattered_calling_intervals": [
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0000-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0001-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0002-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0003-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0004-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0005-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0006-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0007-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0008-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0009-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0010-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0011-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0012-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0013-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0014-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0015-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0016-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0017-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0018-scattered.interval_list",
-    "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0019-scattered.interval_list"
-  ]
-
-}
+    "FullSomaticPipeline.Mutect2_GATK4.Mutect2.compress": "true",
+    "FullSomaticPipeline.Mutect2_GATK4.Mutect2.analyzeSoftClippedBase": "false",
+    "FullSomaticPipeline.Mutect2_GATK4.run_ob_filter": "false",
+    "FullSomaticPipeline.Mutect2_GATK4.MergeVCFs.compress": "true",
+    "FullSomaticPipeline.Mutect2_GATK4.make_bamout": "true",
+    "FullSomaticPipeline.Mutect2_GATK4.scattered_calling_intervals": [
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0000-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0001-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0002-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0003-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0004-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0005-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0006-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0007-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0008-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0009-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0010-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0011-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0012-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0013-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0014-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0015-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0016-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0017-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0018-scattered.interval_list",
+      "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0019-scattered.interval_list"
+    ]
+  
+  }
+  
