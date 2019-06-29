@@ -58,6 +58,15 @@
     "FullSomaticPipeline.Mutect2_GATK4.run_ob_filter": "false",
     "FullSomaticPipeline.Mutect2_GATK4.MergeVCFs.compress": "true",
     "FullSomaticPipeline.Mutect2_GATK4.make_bamout": "true",
+    "FullSomaticPipeline.Mutect2_GATK4.realignment_index_bundle": "",
+    "FullSomaticPipeline.Mutect2_GATK4.FilterAlignmentArtifacts.compress": "true",
+    "FullSomaticPipeline.Mutect2_GATK4.Filter.compress": "true",
+
+    "##_FullSomaticPipeline.Mutect2_GATK4.Filter.intervals": "File? (optional)",
+    "##_FullSomaticPipeline.Mutect2_GATK4.Filter.m2_extra_filtering_args": "String? (optional)",
+    "##_FullSomaticPipeline.Mutect2_GATK4.CalculateContamination.intervals": "String? (optional)",
+    "##_FullSomaticPipeline.Mutect2_GATK4.FilterAlignmentArtifacts.realignment_extra_args": "String? (optional)",
+
     "FullSomaticPipeline.Mutect2_GATK4.scattered_calling_intervals": [
       "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0000-scattered.interval_list",
       "/home/tang-lab/data/resource/GATK_resources/bundle/b37/Interval_files/Agilent_exomes_human_b37/0001-scattered.interval_list",
