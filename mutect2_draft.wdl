@@ -61,6 +61,7 @@ task Mutect2 {
         $tumor_command_line \
         $normal_command_line \
         ${"--germline-resource " + gnomad} \
+        --af-of-alleles-not-in-resource 0.0000025 \
         ${"-pon " + pon} \
         ${"-L " + intervals} \
         -O "${output_vcf}" \
@@ -249,6 +250,72 @@ task CalculateContamination {
   }
 }
 
+task Filter {
+  # inputs
+  File? intervals
+  File ref_fasta
+  File ref_fasta_index
+  File ref_dict
+  File unfiltered_vcf
+  File unfiltered_vcf_idx
+
+  File? mutect_stats
+  File? artifact_priors_tar_gz
+  File? contamination_table
+  File? maf_segments
+  Boolean compress
+  String gatk4_path
+  String output_name
+  String output_vcf = output_name + if compress then ".vcf.gz" else ".vcf"
+  String output_vcf_idx = output_vcf + if compress then ".tbi" else ".idx"
+  String? m2_extra_filtering_args
+
+  command {
+    ${gatk4_path} --java-options "-Xmx20g" FilterMutectCalls \
+      -V ${unfiltered_vcf} \
+      -R ${ref_fasta} \
+	  -O ${output_vcf} \
+	  ${"--contamination-table " + contamination_table} \
+	  ${"--tumor-segmentation " + maf_segments} \
+	  ${"--ob-priors " + artifact_priors_tar_gz} \
+	  ${"-stats " + mutect_stats} \
+	  --filtering-stats filtering.stats \
+	  ${m2_extra_filtering_args}
+  }
+  output {
+    File filtered_vcf = "${output_vcf}"
+    File filtered_vcf_idx = "${output_vcf_idx}"
+    File filtering_stats = "filtering.stats"
+  }
+}
+
+task FilterAlignmentArtifacts {
+  #input
+  File input_vcf
+  File input_vcf_idx
+  File bam
+  File bai
+  File realignment_index_bundle
+  Boolean compress
+  String output_name
+  String gatk4_path
+  String output_vcf = output_name + if compress then ".vcf.gz" else ".vcf"
+  String output_vcf_idx = output_vcf +  if compress then ".tbi" else ".idx"
+  String? realignment_extra_args
+
+  command {
+    ${gatk4_path} --java-options "-Xmx20g" FilterAlignmentArtifacts \
+      -V ${input_vcf} \
+      -I ${bam} \
+      --bwa-mem-index-image ${realignment_index_bundle} \
+      ${realignment_extra_args} \
+      -O ${output_vcf}
+  }
+  output {
+    File filtered_vcf = "${output_vcf}"
+    File filtered_vcf_idx = "${output_vcf_idx}"
+  }
+}
 
 
 
@@ -342,7 +409,7 @@ workflow Mutect2_GATK4 {
       input_vcf_indices = Mutect2.unfiltered_vcf_idx,
       output_name = unfiltered_name,
       gatk4_path = gatk4_path
-}
+  }
 
 
   if (make_bamout_or_default) {
@@ -360,13 +427,13 @@ workflow Mutect2_GATK4 {
         output_vcf_name = basename(MergeVCFs.merged_vcf, ".vcf.gz"),
         gatk4_path = gatk4_path
     }
-}
+  }
 
   call MergeStats {
     input:
       stats = Mutect2.stats,
       gatk4_path = gatk4_path
-}
+  }
 
   if (defined(variants_for_contamination)) {
     call MergePileupSummaries as MergeTumorPileups {
@@ -393,7 +460,40 @@ workflow Mutect2_GATK4 {
         normal_pileups = MergeNormalPileups.merged_table,
         gatk4_path = gatk4_path
     }
-}
+  }
+
+  call Filter {
+    input:
+      ref_fasta = ref_fasta,
+      ref_fasta_index = ref_fasta_index,
+      ref_dict = ref_dict,
+      intervals = intervals,
+      unfiltered_vcf = MergeVCFs.merged_vcf,
+      unfiltered_vcf_idx = MergeVCFs.merged_vcf_idx,
+      output_name = filtered_name,
+      compress = compress,
+      mutect_stats = MergeStats.merged_stats,
+      contamination_table = CalculateContamination.contamination_table,
+      maf_segments = CalculateContamination.maf_segments,
+      artifact_priors_tar_gz = LearnReadOrientationModel.artifact_prior_table,
+      m2_extra_filtering_args = m2_extra_filtering_args,
+      gatk4_path = gatk4_path
+  }
+
+  if (defined(realignment_index_bundle)) {
+    call FilterAlignmentArtifacts {
+      input:
+        gatk4_path = gatk4_path,
+        bam = tumor_bam,
+        bai = tumor_bai,
+        realignment_index_bundle = select_first([realignment_index_bundle]),
+        realignment_extra_args = realignment_extra_args,
+        compress = compress,
+        output_name = filtered_name,
+        input_vcf = Filter.filtered_vcf,
+        input_vcf_idx = Filter.filtered_vcf_idx
+    }
+  }
 
   # Outputs that will be retained when execution is complete  
   output {
